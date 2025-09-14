@@ -122,7 +122,7 @@ void pololu_i2c_disconnect( pololu_i2c_adapter *adapter )
 }
 
 //---------------------------------------------------------------
-// pololu_i2c_is_connected()
+// pololu_i2c_is_connected()o
 //
 // Check the state of the connection.
 //---------------------------------------------------------------
