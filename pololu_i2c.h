@@ -141,15 +141,25 @@ int pololu_i2c_get_device_info( pololu_i2c_adapter *adapter, pololu_i2c_device_i
  */
 int pololu_i2c_scan( pololu_i2c_adapter *adapter, uint8_t *found_addresses, int max_devices );
 
-/**
- * @brief Sets the I²C mode.
- * @param mode one of four supported I²C modes
- *      0: Standard-mode (100 kHz)
- *      1: Fast-mode (400 kHz)
- *      2: Fast-mode Plus (1000 kHz)
- *      3: 10 kHz mode
- */
-int pololu_i2c_set_mode(int mode);
+// /**
+//  * @brief Sets the I²C mode.
+//  * @param mode one of four supported I²C modes
+//  *      0: Standard-mode (100 kHz)
+//  *      1: Fast-mode (400 kHz)
+//  *      2: Fast-mode Plus (1000 kHz)
+//  *      3: 10 kHz mode
+//  */
+// int pololu_i2c_set_bus_mode(pololu_i2c_adapter *adapter, int mode);
+
+// /**
+//  * @brief Sets the I²C frequency.
+//  * @param mode one of four supported I²C modes
+//  *      0: Standard-mode (100 kHz)
+//  *      1: Fast-mode (400 kHz)
+//  *      2: Fast-mode Plus (1000 kHz)
+//  *      3: 10 kHz mode
+//  */
+int pololu_i2c_set_frequency( pololu_i2c_adapter *adapter, unsigned int frequency_khz );
 
 /**
  * @brief Set I²C timeout

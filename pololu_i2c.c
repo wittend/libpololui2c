@@ -132,9 +132,89 @@ bool pololu_i2c_is_connected( const pololu_i2c_adapter *adapter )
 }
 
 //---------------------------------------------------------------
+// pololu_i2c_write_reg()
+//
+// Function to write data to a specific adaptor address and register.
+//---------------------------------------------------------------
+int pololu_i2c_write_reg( pololu_i2c_adapter *adapter, uint8_t address,  uint8_t reg, const uint8_t *data, uint8_t size )
+{
+    if(!pololu_i2c_is_connected(adapter))
+    {
+        return -1;
+    }
+    if(size > 255)
+    {
+        return -1;
+    }
+
+    uint8_t cmd[258];
+    cmd[0] = 0x91;
+    cmd[1] = address;
+    cmd[2] = reg;
+    cmd[3] = size;
+    memcpy(&cmd[3], data, size);
+    if(write(adapter->fd, cmd, size + 4) != size + 4)
+    {
+        perror("Failed to write to adapter");
+        return -1;
+    }
+
+    uint8_t response[1];
+    ssize_t len = read(adapter->fd, response, 1);
+    int error = pololu_i2c_check_response(response, 1, len);
+    if(error)
+    {
+        return error;
+    }
+
+    return size;
+}
+
+//---------------------------------------------------------------
+// pololu_i2c_read_reg()
+//
+// Function to read data from a specific adaptor address and register.
+//---------------------------------------------------------------
+int pololu_i2c_read_reg( pololu_i2c_adapter *adapter, uint8_t address, uint8_t reg, uint8_t *data, uint8_t size )
+{
+    if(!pololu_i2c_is_connected(adapter))
+    {
+        return -1;
+    }
+    if(size > 255)
+    {
+        return -1;
+    }
+
+    //    uint8_t cmd[] = { 0x92, address, reg, size };
+    uint8_t cmd[258];
+    cmd[0] = 0x92;
+    cmd[1] = address;
+    cmd[2] = reg;
+    cmd[3] = size;
+    memcpy(&cmd[3], data, size);
+    if(write(adapter->fd, cmd, 4) != 4)
+    {
+        perror("Failed to write to adapter");
+        return -1;
+    }
+
+    uint8_t response[256];
+    ssize_t len = read(adapter->fd, response, 1 + size);
+    int error = pololu_i2c_check_response(response, 1 + size, len);
+    if(error)
+    {
+        return error;
+    }
+    memcpy(data, &response[1], size);
+
+    return size;
+}
+
+//---------------------------------------------------------------
 // pololu_i2c_write_to()
 //
-//
+// Function to write data to a specific adaptor address.
 //---------------------------------------------------------------
 int pololu_i2c_write_to( pololu_i2c_adapter *adapter, uint8_t address, const uint8_t *data, uint8_t size )
 {
@@ -157,7 +237,6 @@ int pololu_i2c_write_to( pololu_i2c_adapter *adapter, uint8_t address, const uin
         perror("Failed to write to adapter");
         return -1;
     }
-
     uint8_t response[1];
     ssize_t len = read(adapter->fd, response, 1);
     int error = pololu_i2c_check_response(response, 1, len);
@@ -170,9 +249,9 @@ int pololu_i2c_write_to( pololu_i2c_adapter *adapter, uint8_t address, const uin
 }
 
 //---------------------------------------------------------------
-// pololu_i2c_write_to()
+// pololu_i2c_read_from()
 //
-//
+//  Read a specified number of bytes from an address on the adapter.
 //---------------------------------------------------------------
 int pololu_i2c_read_from( pololu_i2c_adapter *adapter, uint8_t address, uint8_t *data, uint8_t size )
 {
@@ -201,16 +280,6 @@ int pololu_i2c_read_from( pololu_i2c_adapter *adapter, uint8_t address, uint8_t 
     }
     memcpy(data, &response[1], size);
     return size;
-}
-
-//---------------------------------------------------------------
-// pololu_i2c_set_mode()
-//
-// Set I²C mode
-//---------------------------------------------------------------
-int pololu_i2c_set_mode(int mode)
-{
-    return 0;
 }
 
 //---------------------------------------------------------------
@@ -252,6 +321,35 @@ int pololu_i2c_enable_VCC_out()
 {
     return 0;
 }
+
+// //---------------------------------------------------------------
+// // pololu_i2c_set_bus_mode()
+// //
+// // Set I2c standard speeds.
+// //---------------------------------------------------------------
+// int pololu_i2c_set_bus_mode(pololu_i2c_adapter *adapter, unsigned int mode)
+// {
+//     uint8_t mode;
+//     if(frequency_khz >= 1000)
+//     {
+//         mode = I2C_FAST_MODE_PLUS;
+//     }
+//     else if(frequency_khz >= 400)
+//     {
+//         mode = I2C_FAST_MODE;
+//     }
+//     else if(frequency_khz >= 100)
+//     {
+//         mode = I2C_STANDARD_MODE;
+//     }
+//     else
+//     {
+//         mode = I2C_10_KHZ;
+//     }
+//
+//     rv = pololu_i2c_set_frequency(pololu_i2c_adapter *adapter, unsigned int frequency_khz);
+//     return rv;
+// }
 
 //---------------------------------------------------------------
 // pololu_i2c_set_frequency()
