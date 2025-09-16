@@ -76,16 +76,6 @@ int main()
     rv = pololu_i2c_read_from(&adp, addr, buf, 2);
     if (rv < 0) 
     {
-        fprintf(stderr, "Read failed: %s\n", pololu_i2c_error_string(-rv));{
-        fprintf(stderr, "Write failed: %s\n", pololu_i2c_error_string(-rv));
-        goto done;
-    }
-
-    // Read back 2 bytes
-    uint8_t buf[2] = {0};
-    rv = pololu_i2c_read_from(&adp, addr, buf, 2);
-    if (rv < 0) 
-    {
         fprintf(stderr, "Read failed: %s\n", pololu_i2c_error_string(-rv));
         goto done;
     }
