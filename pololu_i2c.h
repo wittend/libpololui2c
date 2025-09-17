@@ -110,6 +110,28 @@ int pololu_i2c_write_to( pololu_i2c_adapter *adapter, uint8_t address, const uin
 int pololu_i2c_read_from( pololu_i2c_adapter *adapter, uint8_t address, uint8_t *data, uint8_t size );
 
 /**
+ * @brief Writes data to an I2C device register.
+ * @param adapter A pointer to the pololu_i2c_adapter struct.
+ * @param address The 7-bit I2C address.
+ * @param reg   The 8 bit register pointer.
+ * @param data A buffer to store the read data.
+ * @param size The number of bytes to read.
+ * @return The number of bytes read, or a negative error code on failure.
+ */
+int pololu_i2c_write_reg( pololu_i2c_adapter *adapter, uint8_t address,  uint8_t reg, const uint8_t *data, uint8_t size );
+
+/**
+* @brief Reads data from an I2C device register.
+  * @param adapter A pointer to the pololu_i2c_adapter struct.
+ * @param address The 7-bit I2C address.
+ * @param reg   The 8 bit register pointer.
+ * @param data A buffer to store the read data.
+ * @param size The number of bytes to read.
+ * @return The number of bytes read, or a negative error code on failure.
+ */
+int pololu_i2c_read_reg( pololu_i2c_adapter *adapter, uint8_t address, uint8_t reg, uint8_t *data, uint8_t size );
+
+/**
  * @brief Sets the I2C frequency.
  * @param adapter A pointer to the pololu_i2c_adapter struct.
  * @param frequency_khz The desired frequency in kHz.
